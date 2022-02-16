@@ -1,0 +1,2 @@
+# GraKonkursowa
+Gra na konkurs.
