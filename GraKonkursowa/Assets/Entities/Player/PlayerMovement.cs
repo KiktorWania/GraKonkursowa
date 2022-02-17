@@ -25,9 +25,12 @@ public class PlayerMovement : MonoBehaviour
     {
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveY = Input.GetAxisRaw("Vertical");
+        if (moveX > 0)
+            gameObject.GetComponent<SpriteRenderer>().flipX = false;
+        else if (moveX < 0)
+            gameObject.GetComponent<SpriteRenderer>().flipX = true;
 
         movement = new Vector2(moveX, moveY).normalized;
-
         if (Input.GetKeyDown(KeyCode.F))
         {
             pAnimation.SetTrigger("Attack");
