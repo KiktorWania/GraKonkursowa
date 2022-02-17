@@ -12,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
     public float camSpeeeeeed;
     public float distance;
     public Vector3 camOffset;
+
+    public Animator pAnimation;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +27,11 @@ public class PlayerMovement : MonoBehaviour
         float moveY = Input.GetAxisRaw("Vertical");
 
         movement = new Vector2(moveX, moveY).normalized;
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            pAnimation.SetTrigger("Attack");
+        }
     }
     private void FixedUpdate()
     {
