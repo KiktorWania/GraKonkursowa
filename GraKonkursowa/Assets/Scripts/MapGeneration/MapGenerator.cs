@@ -4,29 +4,27 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class MapGenerator : MonoBehaviour
+public class MapGenerator : AbstractMapGenerator
 {
-    [SerializeField]
-    Vector2Int startPos = Vector2Int.zero;
+    public Vector2Int startPos = Vector2Int.zero;
 
-    [SerializeField]
-    private int iterations = 10;
-    [SerializeField]
+
+    public int iterations = 10;
+
     public int walkLength = 10;
-    [SerializeField]
+   
     public bool startRandomlyEachIteration = true;
 
-    public void Run()
+    public TileGenerator tileGenerator;
+
+    protected override void Run()
     {
         HashSet<Vector2Int> floorPositions = RunRandomWalk();
-
-        foreach(var position in floorPositions)
-        {
-            Debug.Log(position);
-        }
+        tileGenerator.Clear();
+        tileGenerator.DrawFloorTiles(floorPositions);
     }
 
-    protected HashSet<Vector2Int> RunRandomWalk()
+    public HashSet<Vector2Int> RunRandomWalk()
     {
         var currentPos = startPos;
         HashSet<Vector2Int> floorPos = new HashSet<Vector2Int>();
