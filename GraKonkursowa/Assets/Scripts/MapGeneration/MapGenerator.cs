@@ -8,6 +8,13 @@ public class MapGenerator : AbstractMapGenerator
 {
     public Vector2Int startPos = Vector2Int.zero;
 
+    private int corridorLenght = 14, corridorCount = 5;
+
+    [Range(.1f, 1f)]
+    private float roomPercent = 0.8f;
+
+
+
 
     public int iterations = 10;
 
@@ -40,5 +47,18 @@ public class MapGenerator : AbstractMapGenerator
         }
 
         return floorPos;
+    }
+
+    private void CreateCorridors(HashSet<Vector2Int> floorPosition)
+    {
+        var curPos = startPos;
+
+        for (int i = 0; i < corridorCount; i++)
+        {
+            var corridor = RandomWalk.RandomCorridor(curPos, corridorLenght);
+
+            curPos = corridor[corridor.Count - 1];
+            floorPosition.UnionWith(corridor);
+        }
     }
 }

@@ -5,6 +5,9 @@ TextureImporter:
   - first:
       213: -114320786643583807
     second: ExampleTileMap_0
+  - first:
+      213: -1741687668362019486
+    second: ExampleTileMap_1
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -122,6 +125,27 @@ TextureImporter:
       bones: []
       spriteID: 1cc7aa9a9d9d96ef0800000000000000
       internalID: -114320786643583807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ExampleTileMap_1
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 26d7a912b4844d7e0800000000000000
+      internalID: -1741687668362019486
       vertices: []
       indices: 
       edges: []
