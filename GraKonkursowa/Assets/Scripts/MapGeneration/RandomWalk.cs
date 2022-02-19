@@ -21,6 +21,22 @@ public static class RandomWalk
         return path;
     }
 
+    public static List<Vector2Int> RandomCorridor(Vector2Int startPos, int corridorLength)
+    {
+        List<Vector2Int> corridor = new List<Vector2Int>();
+        var direction = Direction2D.getDirection();
+        var currentPos = startPos;
+        corridor.Add(currentPos);
+
+        for (int i = 0; i < corridorLength; i++)
+        {
+            currentPos += direction;
+            corridor.Add(currentPos);
+        }
+
+        return corridor;
+    }
+
     public static class Direction2D {
         public static List<Vector2Int> directionList = new List<Vector2Int>
         {
@@ -35,4 +51,6 @@ public static class RandomWalk
             return directionList[Random.Range(0, directionList.Count)];
         }
     }
+
+    
 }
