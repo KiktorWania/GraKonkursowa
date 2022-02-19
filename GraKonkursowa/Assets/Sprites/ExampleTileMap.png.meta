@@ -8,6 +8,9 @@ TextureImporter:
   - first:
       213: -1741687668362019486
     second: ExampleTileMap_1
+  - first:
+      213: -2602562283240963873
+    second: ExampleTileMap_2
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -113,7 +116,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 48
         width: 16
         height: 16
       alignment: 0
@@ -134,7 +137,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 16
-        y: 0
+        y: 48
         width: 16
         height: 16
       alignment: 0
@@ -146,6 +149,27 @@ TextureImporter:
       bones: []
       spriteID: 26d7a912b4844d7e0800000000000000
       internalID: -1741687668362019486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ExampleTileMap_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 32
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd0c7917467d1ebd0800000000000000
+      internalID: -2602562283240963873
       vertices: []
       indices: 
       edges: []

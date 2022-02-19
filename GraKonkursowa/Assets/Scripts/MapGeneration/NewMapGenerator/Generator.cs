@@ -14,36 +14,31 @@ public class Generator : MonoBehaviour
     [SerializeField]
     private List<GameObject> rooms;
 
-    public int roomCount = 10; // Do not counts main room;
+    public int roomCount = 5; // Do not counts main room;
 
-    public TileBase floorTile;
+    public TileBase floorTile, wallTile;
+    
 
     private List<Vector3Int> doorPoss = new List<Vector3Int>();
 
     public int corridorLength = 10;
+
+    private Vector3Int offset = new Vector3Int(0, 0, 0);
+    /// /////////////////////
+    
+
+
     void Start()
     {
-        foreach(Vector3Int cellIndex in mainRoom.gameObject.GetComponentInChildren<Tilemap>().cellBounds.allPositionsWithin)
-        {
-            var tile = mainRoom.gameObject.GetComponentInChildren<Tilemap>().GetTile(cellIndex);
-            if(tile != null)
-            { 
-                var tilePos = cellIndex;
-                if (tile.ToString() == "doorTile (UnityEngine.Tilemaps.Tile)")
-                {
-                    doorPoss.Add(tilePos);
-                }
+        Room.generateRoom(map, mainRoom, new Vector3Int(0, 0, 0));
 
-                if (!map.HasTile(tilePos))
-                {
-                    map.SetTile(tilePos, tile);
-                }
-            }
-        }
-        foreach(Vector3Int doorPos in doorPoss)
+        for(int i = 1; i <= roomCount; i++)
         {
-            drawCorridor(doorPos);
+            offset = new Vector3Int(Random.Range(-10, 10), Random.Range(-10, 10), 0);
+            Room.generateRoom(map, rooms[Random.Range(0, 3)], offset);
         }
+
+        Room.fillOutMap(map, wallTile);
     }
     void drawCorridor(Vector3Int startPos)    // 1 - UP, 2 - RIGHT, 3 - DOWN, 4 - LEFT
     {
