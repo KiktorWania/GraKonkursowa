@@ -17,9 +17,9 @@ public class PunchBagScript : MonoBehaviour
             textDmg.text = "DMG: 0";
         }
     }
-    public void TakeDamage()
+    public void TakeDamage(int takeDMG)
     {
-        dmg += 27;
+        dmg += takeDMG;
         time = 5;
         textDmg.text = "DMG: " + dmg.ToString();
         Debug.Log("Kaczka");

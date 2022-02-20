@@ -17,6 +17,10 @@ public class PlayerMovement : MonoBehaviour
     public float attackRange;
     public Transform hitPoint;
     public LayerMask enemiesLayer;
+
+    public Transform cloudPoint;
+    public LayerMask cloudLayer;
+    public Animator cloudAnimation;
     // Start is called before the first frame update
     void Start()
     {
@@ -42,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         movement = new Vector2(moveX, moveY).normalized;
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.H))
         {
             pAnimation.SetTrigger("Attack");
 
@@ -50,8 +54,32 @@ public class PlayerMovement : MonoBehaviour
 
             foreach (Collider2D enemy in hitEnemies)
             {
-                enemy.GetComponent<PunchBagScript>().TakeDamage();
+                enemy.GetComponent<PunchBagScript>().TakeDamage(27);
             }
+        }
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            pAnimation.SetTrigger("Attack");
+
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(hitPoint.position, attackRange, enemiesLayer);
+
+            foreach (Collider2D enemy in hitEnemies)
+            {
+                enemy.GetComponent<PunchBagScript>().TakeDamage(15);
+            }
+        }
+
+        Collider2D clouds = Physics2D.OverlapCircle(cloudPoint.position, 0.1f, cloudLayer);
+
+        if (clouds != null)
+        {
+            cam.orthographicSize = 3f;
+            cloudAnimation.SetBool("InsideCloud", true);
+        }
+        else
+        {
+            cam.orthographicSize = 5f;
+            cloudAnimation.SetBool("InsideCloud", false);
         }
     }
     private void FixedUpdate()

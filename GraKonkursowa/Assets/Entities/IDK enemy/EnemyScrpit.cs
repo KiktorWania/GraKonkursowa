@@ -15,8 +15,6 @@ public class EnemyScrpit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        RaycastHit2D hit;
         Debug.DrawRay(transform.position, -(transform.position - player.position), Color.white, Vector2.Distance(transform.position, player.position));
         // Does the ray intersect any objects excluding the player layer
         if (Physics2D.Linecast(transform.position, player.position, playerLayer) == false)
