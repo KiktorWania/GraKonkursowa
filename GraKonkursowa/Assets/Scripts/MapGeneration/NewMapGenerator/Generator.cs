@@ -12,9 +12,10 @@ public class Generator : MonoBehaviour
     [SerializeField]
     private GameObject bossRoom;
     [SerializeField]
-    private List<GameObject> rooms;
+    private List<GameObject> roomsPrefab;
 
     public int roomCount = 5; // Do not counts main room;
+    Dictionary<int, Room> rooms;
 
     public TileBase floorTile, wallTile;
     
@@ -25,21 +26,23 @@ public class Generator : MonoBehaviour
 
     private Vector3Int offset = new Vector3Int(0, 0, 0);
     /// /////////////////////
-    
 
+    Room room3;
 
     void Start()
     {
-        Room.generateRoom(map, mainRoom, new Vector3Int(0, 0, 0));
+        rooms = new Dictionary<int, Room>();
+        
+        room3 = new Room(mainRoom, map);
+        rooms.Add(0, room3);
 
-        for(int i = 1; i <= roomCount; i++)
+        for (int i = 1; i < roomCount + 1; i++)
         {
-            offset = new Vector3Int(Random.Range(-10, 10), Random.Range(-10, 10), 0);
-            Room.generateRoom(map, rooms[Random.Range(0, 3)], offset);
+            Room room = new Room(roomsPrefab[Random.Range(0,3)], map);
+            rooms.Add(i, room);
         }
-
-        Room.fillOutMap(map, wallTile);
     }
+
     void drawCorridor(Vector3Int startPos)    // 1 - UP, 2 - RIGHT, 3 - DOWN, 4 - LEFT
     {
         int direction = Direction(startPos);
@@ -109,4 +112,84 @@ public class Generator : MonoBehaviour
         }
         return 0;
     }
+
+    public static void fillOutMap(Tilemap map, TileBase fillTile)
+    {
+        foreach (var cellIndex in map.cellBounds.allPositionsWithin)
+        {
+            var tilepos = cellIndex;
+            if (!map.HasTile(tilepos))
+            {
+                map.SetTile(cellIndex, fillTile);
+            }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        foreach(var room in rooms)
+        {
+            var roomCenter = room.Value.getMapCenter();
+
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawCube(roomCenter, new Vector3(1, 1, 1));
+        }
+
+        spanninTree();
+
+       
+
+        for (int i = 0; i < rooms.Values.Count; i++)
+        {
+            for (int x = 0; x < rooms[i].connectedIds.Count; x++) {
+                Gizmos.DrawLine(rooms[i].getMapCenter(), rooms[rooms[i].connectedIds[x]].getMapCenter());
+            }
+        }
+
+    }
+
+    private void spanninTree()
+    {
+        /*
+        float lenght = 100000;
+        int roomId = 0;
+        for(int i = 1; i < rooms.Values.Count; i++)
+        {
+            float dis = Vector3.Distance(rooms[0].getMapCenter(), rooms[i].getMapCenter());
+            if(dis < lenght)
+            {
+                roomId = i;
+                lenght = dis;
+            }
+        }
+        rooms[0].conected = true;
+        rooms[0].connectedIds.Add(roomId);
+        */
+        float lenght = 100000;
+        int roomId = 0;
+
+        for (int i = 0; i < rooms.Values.Count; i++)
+        {
+            
+
+            for (int x = 1 + i; x < rooms.Values.Count; x++)
+            {
+                float dis = Vector3.Distance(rooms[i].getMapCenter(), rooms[x].getMapCenter());
+                if (dis < lenght && rooms[x].getCon() == false)
+                {
+                    roomId = x;
+                    lenght = dis;
+                }
+            }
+            if(rooms[roomId] != null)
+            {
+                rooms[i].setConected(true);
+                rooms[i].connectedIds.Add(roomId);
+            }
+        }
+
+        
+    }
+
+
 }
