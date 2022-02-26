@@ -88,41 +88,57 @@ public class Room
         return conected;
     }
 
-
-
-    /*
-    public static void generateRoom(Tilemap map, GameObject room, Vector3Int ofset)
+    public static void drawCorridor(Vector3 a, Vector3 b, Tilemap map, TileBase floorTile)
     {
-        Dictionary<Vector3Int, TileBase> tiles = new Dictionary<Vector3Int, TileBase>();
-        var tilemap = room.GetComponentInChildren<Tilemap>();
+        Vector3 ab = (a + b) / 2;
 
-        foreach (var cellIndex in tilemap.cellBounds.allPositionsWithin)
+        if(a.y - ab.y  > -2 && a.y + ab.y < 2)
         {
-            var tile = tilemap.GetTile(cellIndex);
-            var tilepos = ofset + cellIndex;
-            if (!map.HasTile(tilepos))
+            Vector3Int startPos = new Vector3Int((int)ab.x, (int)a.y, 0);
+            Vector3Int curPos = startPos;
+            if(a.x - ab.x < 0)
             {
-                tiles.Add(tilepos, tile);
+                //toRight
+                while(curPos.x < b.x)
+                {
+                    map.SetTile(curPos, floorTile);
+                    curPos.x++;
+                }
             }
-            else if (map.HasTile(tilepos))
+            else
             {
-                tiles.Clear();
-                generateRoom(map, room, ofset + new Vector3Int(Random.Range(-10, 10), Random.Range(-10, 10), 0));
-                break;
+                //toLeft
+                while (curPos.x > b.x)
+                {
+                    map.SetTile(curPos, floorTile);
+                    curPos.x--;
+                }
             }
-         }
-
-        foreach(var tile in tiles)
-        {
-            map.SetTile(tile.Key, tile.Value);
         }
 
-        Debug.Log(tilemap.cellBounds.center + ofset);
-
-        
+        if (a.x - ab.x > -2 && a.x + ab.x < 2)
+        {
+            Vector3Int startPos = new Vector3Int((int)ab.x, (int)a.y, 0);
+            Vector3Int curPos = startPos;
+            if (a.y - ab.y < 0)
+            {
+                //toUP
+                while (curPos.y < b.y)
+                {
+                    map.SetTile(curPos, floorTile);
+                    curPos.y++;
+                }
+            }
+            else
+            {
+                //toDown
+                while (curPos.y > b.y)
+                {
+                    map.SetTile(curPos, floorTile);
+                    curPos.y--;
+                }
+            }
+        }
     }
-
-    */
-
 
 }

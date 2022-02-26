@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
+using UnityEditor;
 using UnityEngine;
 
 public class Generator : MonoBehaviour
@@ -41,76 +42,24 @@ public class Generator : MonoBehaviour
             Room room = new Room(roomsPrefab[Random.Range(0,3)], map);
             rooms.Add(i, room);
         }
-    }
 
-    void drawCorridor(Vector3Int startPos)    // 1 - UP, 2 - RIGHT, 3 - DOWN, 4 - LEFT
-    {
-        int direction = Direction(startPos);
+        //fillOutMap(map, wallTile);
+        spanninTree();
 
-
-        Vector3Int tilePos = new Vector3Int(0, 0, 0);
-
-        for (int i = 0; i < corridorLength; i++)
+        for (int i = 0; i < rooms.Values.Count; i++)
         {
-            switch (direction)
+            if (rooms[i].connectedIds != null)
             {
-                case 1:
-                    tilePos = new Vector3Int(startPos.x, startPos.y + i, 0);
-                    //opDirection = 3;
-                    break;
-                case 2:
-                    tilePos = new Vector3Int(startPos.x + i, startPos.y, 0);
-                    //opDirection = 4;
-                    break;
-                case 3:
-                    tilePos = new Vector3Int(startPos.x, startPos.y - i, 0);
-                    //opDirection = 1;
-                    break;
-                case 4:
-                    tilePos = new Vector3Int(startPos.x - i, startPos.y, 0);
-                    //opDirection = 2;
-                    break;
-                default:
-                    map.SetTile(tilePos, floorTile);
-                    break;
+                for (int x = 0; x < rooms[i].connectedIds.Count; x++)
+                {
+                    drawCorridor(rooms[i].getMapCenter(), rooms[rooms[i].connectedIds[x]].getMapCenter());
+                }
             }
 
-            if (!map.HasTile(tilePos))
-            {
-                map.SetTile(tilePos, floorTile);
-            }
+
         }
 
-    }
-
-    int Direction(Vector3Int tilePos)
-    {
-        Vector3Int basePos = tilePos;
-        for (int i = 1; i <= 4; i++)
-        {
-            tilePos = basePos;
-            switch (i)
-            {
-                case 1:
-                    tilePos += Vector3Int.up;
-                    break;
-                case 2:
-                    tilePos += Vector3Int.right;
-                    break;
-                case 3:
-                    tilePos += Vector3Int.down;
-                    break;
-                case 4:
-                    tilePos += Vector3Int.left;
-                    break;
-            }
-
-            if (!map.HasTile(tilePos))
-            {
-                return i;
-            }
-        }
-        return 0;
+        fillOutMap(map, wallTile);
     }
 
     public static void fillOutMap(Tilemap map, TileBase fillTile)
@@ -127,22 +76,31 @@ public class Generator : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        foreach(var room in rooms)
-        {
-            var roomCenter = room.Value.getMapCenter();
+        if (Application.isPlaying){
+            foreach (var room in rooms)
+            {
+                var roomCenter = room.Value.getMapCenter();
 
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawCube(roomCenter, new Vector3(1, 1, 1));
-        }
+                Gizmos.color = Color.cyan;
+                //Gizmos.DrawCube(roomCenter, new Vector3(1, 1, 1));
+                Handles.Label(roomCenter, room.Key.ToString());
+            }
 
-        spanninTree();
+            
 
-       
 
-        for (int i = 0; i < rooms.Values.Count; i++)
-        {
-            for (int x = 0; x < rooms[i].connectedIds.Count; x++) {
-                Gizmos.DrawLine(rooms[i].getMapCenter(), rooms[rooms[i].connectedIds[x]].getMapCenter());
+
+            for (int i = 0; i < rooms.Values.Count; i++)
+            {
+                if (rooms[i].connectedIds != null)
+                {
+                    for (int x = 0; x < rooms[i].connectedIds.Count; x++)
+                    {
+                        Gizmos.DrawLine(rooms[i].getMapCenter(), rooms[rooms[i].connectedIds[x]].getMapCenter());
+                    }
+                }
+
+
             }
         }
 
@@ -150,46 +108,119 @@ public class Generator : MonoBehaviour
 
     private void spanninTree()
     {
-        /*
-        float lenght = 100000;
-        int roomId = 0;
-        for(int i = 1; i < rooms.Values.Count; i++)
-        {
-            float dis = Vector3.Distance(rooms[0].getMapCenter(), rooms[i].getMapCenter());
-            if(dis < lenght)
-            {
-                roomId = i;
-                lenght = dis;
-            }
-        }
-        rooms[0].conected = true;
-        rooms[0].connectedIds.Add(roomId);
-        */
-        float lenght = 100000;
-        int roomId = 0;
 
         for (int i = 0; i < rooms.Values.Count; i++)
         {
-            
+            float lenght = float.MaxValue;
+            int roomId = 0;
+
 
             for (int x = 1 + i; x < rooms.Values.Count; x++)
             {
+               
+
+                if (rooms[x].getCon() == true)
+                {
+                    continue;
+                }
+
                 float dis = Vector3.Distance(rooms[i].getMapCenter(), rooms[x].getMapCenter());
-                if (dis < lenght && rooms[x].getCon() == false)
+                if (dis < lenght)
                 {
                     roomId = x;
                     lenght = dis;
                 }
             }
-            if(rooms[roomId] != null)
-            {
+            
+                
                 rooms[i].setConected(true);
+                rooms[roomId].setConected(true);
                 rooms[i].connectedIds.Add(roomId);
+            
+        }
+    }
+
+    public void drawCorridor(Vector3 a, Vector3 b)
+    {
+        int zasieg = 3;
+
+        Vector3 ab = (a + b) / 2;
+        
+        float distanceX = Mathf.Abs(a.x - b.x);
+        float distanceY = Mathf.Abs(a.y - b.y);
+        float test = Mathf.Abs(-4 - -4);
+
+        Debug.Log(distanceX);
+        Debug.Log(distanceY);
+        Debug.Log(test);
+
+        if (distanceX <= zasieg)
+        {
+            Vector3Int startPos = new Vector3Int((int)ab.x, (int)a.y, 0);
+            Vector3Int curPos = startPos;
+            while (curPos.y < b.y)
+            {
+                map.SetTile(curPos, floorTile);
+                curPos.y++;
+            }
+
+        }
+
+        if (distanceY <= zasieg )
+        {
+            Vector3Int startPos = new Vector3Int((int)a.x, (int)ab.y, 0);
+            Vector3Int curPos = startPos;
+            if (a.x - b.x <= 0)
+            {
+                //toRight
+                while (curPos.x < b.x)
+                {
+                    map.SetTile(curPos, floorTile);
+                    curPos.x++;
+                }
             }
         }
 
-        
-    }
+        if(distanceX > zasieg || distanceY > zasieg)
+        {
+            Vector3Int startPos = new Vector3Int((int)a.x, (int)a.y, 0);
+            Vector3Int curPos = startPos;
+            if (a.x - b.x <= 0)
+            {
+                //toRight
+                while (curPos.x < b.x)
+                {
+                    map.SetTile(curPos, floorTile);
+                    curPos.x++;
+                }
+            }
+            else
+            {
+                while (curPos.x > b.x)
+                {
+                    map.SetTile(curPos, floorTile);
+                    curPos.x--;
+                }
+            }
 
+            if (a.y - b.y <= 0)
+            {
+                //toRight
+                while (curPos.y < b.y)
+                {
+                    map.SetTile(curPos, floorTile);
+                    curPos.y++;
+                }
+            }
+            else
+            {
+                while (curPos.y > b.y)
+                {
+                    map.SetTile(curPos, floorTile);
+                    curPos.y--;
+                }
+            }
+        }
+    }
 
 }
