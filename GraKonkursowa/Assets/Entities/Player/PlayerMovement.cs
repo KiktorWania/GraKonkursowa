@@ -21,22 +21,32 @@ public class PlayerMovement : MonoBehaviour
     public Transform cloudPoint;
     public LayerMask cloudLayer;
     public Animator cloudAnimation;
+    GameObject[] debugs;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-
+        debugs = GameObject.FindGameObjectsWithTag("DEBUG");
+        foreach (GameObject kaczka in debugs)
+        {
+            kaczka.SetActive(false);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        TurnDebug();
+
+        //Movement
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveY = Input.GetAxisRaw("Vertical");
         if (moveX > 0)
             gameObject.GetComponent<SpriteRenderer>().flipX = false;
         else if (moveX < 0)
             gameObject.GetComponent<SpriteRenderer>().flipX = true;
-        if (moveX != 0)
+        movement = new Vector2(moveX, moveY).normalized;
+        //Movement animation
+        if (moveX != 0 || moveY != 0)
         {
             pAnimation.SetBool("Running", true);
         }
@@ -44,9 +54,9 @@ public class PlayerMovement : MonoBehaviour
         {
             pAnimation.SetBool("Running", false);
         }
-
-        movement = new Vector2(moveX, moveY).normalized;
-        if (Input.GetKeyDown(KeyCode.H))
+        //Attacks
+        //Heavy attack
+        if (Input.GetKeyDown(KeyCode.J))
         {
             pAnimation.SetTrigger("Attack");
 
@@ -57,7 +67,8 @@ public class PlayerMovement : MonoBehaviour
                 enemy.GetComponent<PunchBagScript>().TakeDamage(27);
             }
         }
-        if (Input.GetKeyDown(KeyCode.J))
+        //Weak attack
+        if (Input.GetKeyDown(KeyCode.K))
         {
             pAnimation.SetTrigger("Attack");
 
@@ -69,6 +80,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        //Cloud effect
         Collider2D clouds = Physics2D.OverlapCircle(cloudPoint.position, 0.1f, cloudLayer);
 
         if (clouds != null)
@@ -84,6 +96,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        //Camera Algin and Movement velocity
         rb.MovePosition(rb.position + movement * speeeeed * Time.deltaTime);
 
         Vector3 playerCamPosition = this.gameObject.transform.position + camOffset;
@@ -93,8 +106,30 @@ public class PlayerMovement : MonoBehaviour
     }
     private void OnDrawGizmosSelected()
     {
+        //Drawing hitbox of attack
         if (hitPoint == null)
             return;
         Gizmos.DrawWireSphere(hitPoint.position, attackRange);
+    }
+    void TurnDebug()
+    {
+        //Debug info
+        if (Input.GetKeyDown(KeyCode.Slash))
+        {
+            if (debugs[0].active == false)
+            {
+                foreach (GameObject kaczka in debugs)
+                {
+                    kaczka.SetActive(true);
+                }
+            }
+            else
+            {
+                foreach (GameObject kaczka in debugs)
+                {
+                    kaczka.SetActive(false);
+                }
+            }
+        }
     }
 }
