@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
 using UnityEditor;
@@ -6,63 +6,54 @@ using UnityEngine;
 
 public class Generator : MonoBehaviour
 {
+    [SerializeField]
     public Tilemap map;
-
     [SerializeField]
-    private GameObject mainRoom;
-    [SerializeField]
-    private GameObject bossRoom;
+    private GameObject mainRoomPrefab;
     [SerializeField]
     private List<GameObject> roomsPrefab;
 
-    public int roomCount = 5; // Do not counts main room;
-    Dictionary<int, Room> rooms;
-
-    public TileBase floorTile, wallTile;
+    public int roomCount = 20; //Liczba pokoi bez głównego pokoju;
+    private Dictionary<int, Room> rooms;
+    [SerializeField]
+    private TileBase floorTile, wallTile;
     
-
-    private List<Vector3Int> doorPoss = new List<Vector3Int>();
-
-    public int corridorLength = 10;
-
-    private Vector3Int offset = new Vector3Int(0, 0, 0);
     /// /////////////////////
 
-    Room room3;
+    private Room mainRoom;
 
     void Start()
     {
         rooms = new Dictionary<int, Room>();
-        
-        room3 = new Room(mainRoom, map);
-        rooms.Add(0, room3);
 
-        for (int i = 1; i < roomCount + 1; i++)
+        mainRoom = new Room(mainRoomPrefab, map);   //Stworznie głównego pokoju
+        rooms.Add(0, mainRoom);                     //Dodanie go do słownika z indeksem zerowym
+
+        for (int i = 1; i < roomCount + 1; i++)     //Dodanie reszty pokoi
         {
             Room room = new Room(roomsPrefab[Random.Range(0,3)], map);
             rooms.Add(i, room);
         }
 
-        //fillOutMap(map, wallTile);
-        spanninTree();
+        spanninTree();  //Połącznie pokoi za pomocą tego popsutego algorytmu
 
-        for (int i = 0; i < rooms.Values.Count; i++)
+        for (int i = 0; i < rooms.Values.Count; i++)    //Wygenerowanie korytarzy
         {
             if (rooms[i].connectedIds != null)
             {
                 for (int x = 0; x < rooms[i].connectedIds.Count; x++)
                 {
-                    drawCorridor(rooms[i].getMapCenter(), rooms[rooms[i].connectedIds[x]].getMapCenter());
+                    drawCorridor(rooms[i].getMapCenter(), rooms[rooms[i].connectedIds[x]].getMapCenter());  
                 }
             }
 
 
         }
 
-        fillOutMap(map, wallTile);
+        fillOutMap(wallTile);  //wypełnienie reszty mapy
     }
 
-    public static void fillOutMap(Tilemap map, TileBase fillTile)
+    public void fillOutMap(TileBase fillTile)
     {
         foreach (var cellIndex in map.cellBounds.allPositionsWithin)
         {
@@ -74,38 +65,6 @@ public class Generator : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        if (Application.isPlaying){
-            foreach (var room in rooms)
-            {
-                var roomCenter = room.Value.getMapCenter();
-
-                Gizmos.color = Color.cyan;
-                //Gizmos.DrawCube(roomCenter, new Vector3(1, 1, 1));
-                Handles.Label(roomCenter, room.Key.ToString());
-            }
-
-            
-
-
-
-            for (int i = 0; i < rooms.Values.Count; i++)
-            {
-                if (rooms[i].connectedIds != null)
-                {
-                    for (int x = 0; x < rooms[i].connectedIds.Count; x++)
-                    {
-                        Gizmos.DrawLine(rooms[i].getMapCenter(), rooms[rooms[i].connectedIds[x]].getMapCenter());
-                    }
-                }
-
-
-            }
-        }
-
-    }
-
     private void spanninTree()
     {
 
@@ -115,16 +74,13 @@ public class Generator : MonoBehaviour
             int roomId = 0;
 
 
-            for (int x = 1 + i; x < rooms.Values.Count; x++)
+            for (int x = 1 + i; x < rooms.Values.Count; x++)    //szukanie najkrótszej drogi z pokoju o indeksie i do pokoju o indeksie x 
             {
-               
-
-                if (rooms[x].getCon() == true)
+                if (rooms[x].getCon() == true)  //jezeli pokoj o indeksie x jest juz polaczony z innym to pomijamy ta iteracje
                 {
                     continue;
                 }
-
-                float dis = Vector3.Distance(rooms[i].getMapCenter(), rooms[x].getMapCenter());
+                float dis = Vector3.Distance(rooms[i].getMapCenter(), rooms[x].getMapCenter()); 
                 if (dis < lenght)
                 {
                     roomId = x;
@@ -133,26 +89,26 @@ public class Generator : MonoBehaviour
             }
             
                 
-                rooms[i].setConected(true);
-                rooms[roomId].setConected(true);
-                rooms[i].connectedIds.Add(roomId);
+            rooms[i].setConected(true);
+            rooms[roomId].setConected(true);
+            rooms[i].connectedIds.Add(roomId);
             
         }
     }
 
-    public void drawCorridor(Vector3 a, Vector3 b)
+    public void drawCorridor(Vector3 a, Vector3 b)  
     {
-        int zasieg = 3;
+        //w duzym skrócie, jezeli pokoje so wystarczajaca blisko siebie to rysuje to prosta linie miedzy nimi,
+        //jesli nie to rysuje korytarz w ksztalcie litery L
+  
+        int zasieg = 3; //zakres ktory pokoje musza przekroczyc aby narysowac korzytarz w ksztalcie L
 
         Vector3 ab = (a + b) / 2;
         
-        float distanceX = Mathf.Abs(a.x - b.x);
-        float distanceY = Mathf.Abs(a.y - b.y);
-        float test = Mathf.Abs(-4 - -4);
+        float distanceX = Mathf.Abs(a.x - b.x); //dystans miedzy pokojami w osi X
+        float distanceY = Mathf.Abs(a.y - b.y); //dystans miedzy pokojami w osi Y
 
-        Debug.Log(distanceX);
-        Debug.Log(distanceY);
-        Debug.Log(test);
+        //Reszta magii, nie chce mi sie tego komentowac ¯\_(ツ)_/¯
 
         if (distanceX <= zasieg)
         {
@@ -172,7 +128,7 @@ public class Generator : MonoBehaviour
             Vector3Int curPos = startPos;
             if (a.x - b.x <= 0)
             {
-                //toRight
+                
                 while (curPos.x < b.x)
                 {
                     map.SetTile(curPos, floorTile);
@@ -187,7 +143,7 @@ public class Generator : MonoBehaviour
             Vector3Int curPos = startPos;
             if (a.x - b.x <= 0)
             {
-                //toRight
+               
                 while (curPos.x < b.x)
                 {
                     map.SetTile(curPos, floorTile);
@@ -205,7 +161,7 @@ public class Generator : MonoBehaviour
 
             if (a.y - b.y <= 0)
             {
-                //toRight
+                
                 while (curPos.y < b.y)
                 {
                     map.SetTile(curPos, floorTile);
@@ -221,6 +177,42 @@ public class Generator : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        bool DebugMode = false;
+        //Gizmos do wyswietlania polaczen miedzy pokojami
+
+        if (Application.isPlaying && DebugMode)
+        {
+            foreach (var room in rooms)
+            {
+                var roomCenter = room.Value.getMapCenter();
+
+                Gizmos.color = Color.cyan;
+                //Gizmos.DrawCube(roomCenter, new Vector3(1, 1, 1));
+                Handles.Label(roomCenter, room.Key.ToString());
+            }
+
+
+
+
+
+            for (int i = 0; i < rooms.Values.Count; i++)
+            {
+                if (rooms[i].connectedIds != null)
+                {
+                    for (int x = 0; x < rooms[i].connectedIds.Count; x++)
+                    {
+                        Gizmos.DrawLine(rooms[i].getMapCenter(), rooms[rooms[i].connectedIds[x]].getMapCenter());
+                    }
+                }
+
+
+            }
+        }
+
     }
 
 }

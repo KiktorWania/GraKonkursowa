@@ -280,16 +280,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   map: {fileID: 1705901827}
-  mainRoom: {fileID: 7324539138128445253, guid: f730da06cbeec2244aa55c67ab7f2cd4, type: 3}
-  bossRoom: {fileID: 0}
+  mainRoomPrefab: {fileID: 7324539138128445253, guid: f730da06cbeec2244aa55c67ab7f2cd4, type: 3}
   roomsPrefab:
   - {fileID: 6720411108875120088, guid: ac90ed93eb2654f4b8e602daea02c773, type: 3}
   - {fileID: 2641382327371923372, guid: f4b12c5d2cb14984a9614d19d9d362b3, type: 3}
   - {fileID: 1607129510738371249, guid: 6354321be740c87449523f3a566170a0, type: 3}
-  roomCount: 5
+  roomCount: 20
   floorTile: {fileID: 11400000, guid: 9266d8a508e5fe5458be0a91f5de500c, type: 2}
   wallTile: {fileID: 11400000, guid: 208f4be657995be449058b386e8b3f2c, type: 2}
-  corridorLength: 10
 --- !u!4 &1680672333
 Transform:
   m_ObjectHideFlags: 0
