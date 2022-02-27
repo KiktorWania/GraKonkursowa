@@ -26,12 +26,19 @@ public class Generator : MonoBehaviour
     {
         rooms = new Dictionary<int, Room>();
 
-        mainRoom = new Room(mainRoomPrefab, map);   //Stworznie głównego pokoju
+        mainRoom = new Room(mainRoomPrefab, map); //Stworznie głównego pokoju
         rooms.Add(0, mainRoom);                     //Dodanie go do słownika z indeksem zerowym
 
         for (int i = 1; i < roomCount + 1; i++)     //Dodanie reszty pokoi
         {
             Room room = new Room(roomsPrefab[Random.Range(0,3)], map);
+
+            if(i == 1)
+            {
+                room.setDebug(true);
+            }
+
+            
             rooms.Add(i, room);
         }
 

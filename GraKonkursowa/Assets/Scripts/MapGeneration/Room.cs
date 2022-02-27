@@ -8,18 +8,26 @@ public class Room
     Vector3 mapCenter;
     GameObject roomPrefab;
     public Tilemap map, roomMap;
+
+    private int range = 4;
     
     public bool conected;
     public bool connectedByCorridor = false;
     public List<int> connectedIds = new List<int>();
 
+    public bool debug;
+
+    Tilemap roomTilemap;
+    Dictionary<Vector3Int, TileBase> tiles = new Dictionary<Vector3Int, TileBase>();
     public Room(GameObject roomPrefab, Tilemap map)
     {
         this.map = map;
         this.roomPrefab = roomPrefab;
         this.roomMap = roomPrefab.GetComponentInChildren<Tilemap>();
-        
-        generate(new Vector3Int(0, 0, 0));
+
+        this.roomTilemap = roomPrefab.GetComponentInChildren<Tilemap>();
+
+        generate(new Vector3Int(0,0,0));
     }
 
     public void generate(Vector3Int ofset)
@@ -32,17 +40,21 @@ public class Room
             jesli nie to spisuje na glowna Tilemape pokoj
          */
 
-        Dictionary<Vector3Int, TileBase> tiles = new Dictionary<Vector3Int, TileBase>();
-        var roomTilemap = roomPrefab.GetComponentInChildren<Tilemap>();
-
         foreach (var cellIndex in roomTilemap.cellBounds.allPositionsWithin)
         {
             var tile = roomTilemap.GetTile(cellIndex);
             var tilepos = ofset + cellIndex;
             if (map.HasTile(tilepos)){
-                Vector3Int newOfset = ofset + new Vector3Int(Random.Range(-10, 10), Random.Range(-10, 10), 0);
+                Vector3Int newOfset = ofset + new Vector3Int(Random.Range(-range+1, range), Random.Range(-range+1, range), 0);
                 mapCenter = newOfset;
                 tiles.Clear();
+
+                if (debug)
+                {
+                    Debug.Log("stary: "+ofset);
+                    Debug.Log("nowy: "+newOfset);
+                }
+
                 generate(newOfset);
                 break;
             }
@@ -81,6 +93,10 @@ public class Room
     public bool getCon()
     {
         return conected;
+    }
+    public void setDebug(bool con)
+    {
+        this.debug = con;
     }
 
 }
