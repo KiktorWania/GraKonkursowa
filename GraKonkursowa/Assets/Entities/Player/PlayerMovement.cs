@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerMovement : MonoBehaviour
 {
     public Vector2 movement;
     public Rigidbody2D rb;
     public float speeeeed;
+    public bool attack;
+    public char[] combo;
+    public float comboTime = 0;
+    public bool protect;
 
     public Camera cam;
     public float camSpeeeeeed;
@@ -36,6 +41,7 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         TurnDebug();
+        Attacks();
 
         //Movement
         float moveX = Input.GetAxisRaw("Horizontal");
@@ -54,32 +60,7 @@ public class PlayerMovement : MonoBehaviour
         {
             pAnimation.SetBool("Running", false);
         }
-        //Attacks
-        //Heavy attack
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            pAnimation.SetTrigger("Attack");
-
-            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(hitPoint.position, attackRange, enemiesLayer);
-
-            foreach (Collider2D enemy in hitEnemies)
-            {
-                enemy.GetComponent<PunchBagScript>().TakeDamage(27);
-            }
-        }
-        //Weak attack
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            pAnimation.SetTrigger("Attack");
-
-            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(hitPoint.position, attackRange, enemiesLayer);
-
-            foreach (Collider2D enemy in hitEnemies)
-            {
-                enemy.GetComponent<PunchBagScript>().TakeDamage(15);
-            }
-        }
-
+        
         //Cloud effect
         Collider2D clouds = Physics2D.OverlapCircle(cloudPoint.position, 0.1f, cloudLayer);
 
@@ -131,5 +112,122 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
+    }
+    void Attacks()
+    {
+        comboTime -= Time.deltaTime;
+        if (comboTime <= 0)
+        {
+            Array.Clear(combo, 0, combo.Length);
+        }
+        //Attacks
+        //Heavy attack
+        if (Input.GetKeyDown(KeyCode.J) && attack)
+        {
+            comboTime = 3;
+            if (combo[2] == '\0')
+            {
+                if (combo[0] == '\0')
+                {
+                    combo[0] = "J"[0];
+                }
+                else if (combo[1] == '\0')
+                {
+                    combo[1] = "J"[0];
+                }
+                else
+                {
+                    combo[2] = "J"[0];
+                }
+            }
+            else
+            {
+                combo[0] = combo[1];
+                combo[1] = combo[2];
+                combo[2] = "J"[0];
+            }
+            pAnimation.SetTrigger("Attack");
+            StartCoroutine(AttackRecharge(0.3f));
+
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(hitPoint.position, attackRange, enemiesLayer);
+
+            foreach (Collider2D enemy in hitEnemies)
+            {
+                enemy.GetComponent<PunchBagScript>().TakeDamage(27);
+            }
+        }
+        //Weak attack
+        if (Input.GetKeyDown(KeyCode.K) && attack)
+        {
+            comboTime = 3;
+            if (combo[2] == '\0')
+            {
+                if (combo[0] == '\0')
+                {
+                    combo[0] = "K"[0];
+                }
+                else if (combo[1] == '\0')
+                {
+                    combo[1] = "K"[0];
+                }
+                else
+                {
+                    combo[2] = "K"[0];
+                }
+            }
+            else
+            {
+                combo[0] = combo[1];
+                combo[1] = combo[2];
+                combo[2] = "K"[0];
+            }
+
+            pAnimation.SetTrigger("Attack");
+            StartCoroutine(AttackRecharge(0.1f));
+
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(hitPoint.position, attackRange, enemiesLayer);
+
+            foreach (Collider2D enemy in hitEnemies)
+            {
+                enemy.GetComponent<PunchBagScript>().TakeDamage(15);
+            }
+        }
+        //Block
+        if (Input.GetKeyDown(KeyCode.L) && attack)
+        {
+            comboTime = 3;
+            if (combo[2] == '\0')
+            {
+                if (combo[0] == '\0')
+                {
+                    combo[0] = "L"[0];
+                }
+                else if (combo[1] == '\0')
+                {
+                    combo[1] = "L"[0];
+                }
+                else
+                {
+                    combo[2] = "L"[0];
+                }
+            }
+            else
+            {
+                combo[0] = combo[1];
+                combo[1] = combo[2];
+                combo[2] = "L"[0];
+            }
+            protect = true;
+        }
+        if (Input.GetKeyUp(KeyCode.L))
+        {
+            protect = false;
+        }
+    }
+    IEnumerator AttackRecharge(float recharge)
+    {
+        attack = false;
+        yield return new WaitForSecondsRealtime(recharge);
+        attack = true;
     }
 }
