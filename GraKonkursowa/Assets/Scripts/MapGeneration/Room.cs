@@ -10,6 +10,7 @@ public class Room
     public Tilemap map, roomMap;
     
     public bool conected;
+    public bool connectedByCorridor = false;
     public List<int> connectedIds = new List<int>();
 
     public Room(GameObject roomPrefab, Tilemap map)

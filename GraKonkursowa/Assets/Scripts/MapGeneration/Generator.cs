@@ -43,7 +43,7 @@ public class Generator : MonoBehaviour
             {
                 for (int x = 0; x < rooms[i].connectedIds.Count; x++)
                 {
-                    drawCorridor(rooms[i].getMapCenter(), rooms[rooms[i].connectedIds[x]].getMapCenter());  
+                    drawCorridor(rooms[i].getMapCenter(), rooms[rooms[i].connectedIds[x]].getMapCenter());
                 }
             }
 
@@ -71,17 +71,15 @@ public class Generator : MonoBehaviour
         for (int i = 0; i < rooms.Values.Count; i++)
         {
             float lenght = float.MaxValue;
+            float maxLenght = 50f;
             int roomId = 0;
 
 
             for (int x = 1 + i; x < rooms.Values.Count; x++)    //szukanie najkrótszej drogi z pokoju o indeksie i do pokoju o indeksie x 
             {
-                if (rooms[x].getCon() == true)  //jezeli pokoj o indeksie x jest juz polaczony z innym to pomijamy ta iteracje
-                {
-                    continue;
-                }
+                
                 float dis = Vector3.Distance(rooms[i].getMapCenter(), rooms[x].getMapCenter()); 
-                if (dis < lenght)
+                if (dis < lenght )
                 {
                     roomId = x;
                     lenght = dis;
@@ -89,9 +87,12 @@ public class Generator : MonoBehaviour
             }
             
                 
-            rooms[i].setConected(true);
-            rooms[roomId].setConected(true);
-            rooms[i].connectedIds.Add(roomId);
+            if(roomId != 0)
+            {
+                rooms[i].setConected(true);
+                rooms[roomId].setConected(true);
+                rooms[i].connectedIds.Add(roomId);
+            }
             
         }
     }
@@ -101,7 +102,7 @@ public class Generator : MonoBehaviour
         //w duzym skrócie, jezeli pokoje so wystarczajaca blisko siebie to rysuje to prosta linie miedzy nimi,
         //jesli nie to rysuje korytarz w ksztalcie litery L
   
-        int zasieg = 3; //zakres ktory pokoje musza przekroczyc aby narysowac korzytarz w ksztalcie L
+        int zasieg = 5; //zakres ktory pokoje musza przekroczyc aby narysowac korzytarz w ksztalcie L
 
         Vector3 ab = (a + b) / 2;
         
@@ -109,33 +110,6 @@ public class Generator : MonoBehaviour
         float distanceY = Mathf.Abs(a.y - b.y); //dystans miedzy pokojami w osi Y
 
         //Reszta magii, nie chce mi sie tego komentowac ¯\_(ツ)_/¯
-
-        if (distanceX <= zasieg)
-        {
-            Vector3Int startPos = new Vector3Int((int)ab.x, (int)a.y, 0);
-            Vector3Int curPos = startPos;
-            while (curPos.y < b.y)
-            {
-                map.SetTile(curPos, floorTile);
-                curPos.y++;
-            }
-
-        }
-
-        if (distanceY <= zasieg )
-        {
-            Vector3Int startPos = new Vector3Int((int)a.x, (int)ab.y, 0);
-            Vector3Int curPos = startPos;
-            if (a.x - b.x <= 0)
-            {
-                
-                while (curPos.x < b.x)
-                {
-                    map.SetTile(curPos, floorTile);
-                    curPos.x++;
-                }
-            }
-        }
 
         if(distanceX > zasieg || distanceY > zasieg)
         {
@@ -172,8 +146,35 @@ public class Generator : MonoBehaviour
             {
                 while (curPos.y > b.y)
                 {
+                    
                     map.SetTile(curPos, floorTile);
                     curPos.y--;
+                }
+            }
+        }
+        else if (distanceX <= zasieg)
+        {
+            Vector3Int startPos = new Vector3Int((int)ab.x, (int)a.y, 0);
+            Vector3Int curPos = startPos;
+            while (curPos.y < b.y)
+            {
+                map.SetTile(curPos, floorTile);
+                curPos.y++;
+            }
+
+        }
+
+        else if (distanceY <= zasieg)
+        {
+            Vector3Int startPos = new Vector3Int((int)a.x, (int)ab.y, 0);
+            Vector3Int curPos = startPos;
+            if (a.x - b.x <= 0)
+            {
+
+                while (curPos.x < b.x)
+                {
+                    map.SetTile(curPos, floorTile);
+                    curPos.x++;
                 }
             }
         }
@@ -181,7 +182,7 @@ public class Generator : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        bool DebugMode = false;
+        bool DebugMode = true;
         //Gizmos do wyswietlania polaczen miedzy pokojami
 
         if (Application.isPlaying && DebugMode)
