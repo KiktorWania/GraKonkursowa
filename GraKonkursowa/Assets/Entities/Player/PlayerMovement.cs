@@ -7,19 +7,20 @@ public class PlayerMovement : MonoBehaviour
 {
     public Vector2 movement;
     public Rigidbody2D rb;
-    public float speeeeed;
+    public float speeeeed = 5;
     public bool attack;
     public char[] combo;
     public float comboTime = 0;
-    public bool protect;
+    bool protect;
 
     public Camera cam;
-    public float camSpeeeeeed;
-    public float distance;
-    public Vector3 camOffset;
+    float camSpeeeeeed = 8f;
+    float distance;
+    Vector3 camOffset = new Vector3(0, 0, -10);
 
     public Animator pAnimation;
     public float attackRange;
+    [SerializeField]
     public Transform hitPoint;
     public LayerMask enemiesLayer;
 
@@ -97,7 +98,7 @@ public class PlayerMovement : MonoBehaviour
         //Debug info
         if (Input.GetKeyDown(KeyCode.Slash))
         {
-            if (debugs[0].active == false)
+            if (debugs[0].activeSelf == false)
             {
                 foreach (GameObject kaczka in debugs)
                 {

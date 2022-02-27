@@ -71,7 +71,6 @@ public class Generator : MonoBehaviour
         for (int i = 0; i < rooms.Values.Count; i++)
         {
             float lenght = float.MaxValue;
-            float maxLenght = 50f;
             int roomId = 0;
 
 
