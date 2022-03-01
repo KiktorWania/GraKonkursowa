@@ -15,13 +15,11 @@ public class Room
     public bool connectedByCorridor = false;
     public List<int> connectedIds = new List<int>();
 
-    public bool debug;
-
     public int id = 0;
 
     Tilemap roomTilemap;
     Dictionary<Vector3Int, TileBase> tiles = new Dictionary<Vector3Int, TileBase>();
-    public Room(GameObject roomPrefab, Tilemap map, int spaccing)
+    public Room(GameObject roomPrefab, Tilemap map, int spaccing, int id)
     {
         this.map = map;
         this.roomPrefab = roomPrefab;
@@ -30,6 +28,7 @@ public class Room
         this.roomTilemap = roomPrefab.GetComponentInChildren<Tilemap>();
 
         this.spaccing = spaccing;
+        this.id = id;
 
         generate(new Vector3Int(0,0,0));
     }
@@ -39,9 +38,9 @@ public class Room
         /*
          W skrócie:
             Zczytuje do s³ownika miejsceKafelka i jego typ(tk. podloga, sciana etc.)
-            Sprawdza czy na miejscu jakiego z kafelka znajduje sie juz inny kafelek
-            jesli tak to czysci slownik i wywoluje metode ponownie z innym ofsetem
-            jesli nie to spisuje na glowna Tilemape pokoj
+            Sprawdza czy na miejscu jakiegos z kafelkow znajduje sie juz inny kafelek
+            jesli tak, to czysci slownik i wywoluje metode ponownie z innym ofsetem
+            jesli nie, to spisuje na glowna Tilemape pokoj
          */
 
         foreach (var cellIndex in roomTilemap.cellBounds.allPositionsWithin)
@@ -52,12 +51,6 @@ public class Room
                 Vector3Int newOfset = ofset + new Vector3Int(Random.Range(-spaccing + 1, spaccing), Random.Range(-spaccing + 1, spaccing), 0);
                 mapCenter = newOfset;
                 tiles.Clear();
-
-                if (debug)
-                {
-                    Debug.Log("stary: "+ofset);
-                    Debug.Log("nowy: "+newOfset);
-                }
 
                 generate(newOfset);
                 break;
@@ -72,9 +65,6 @@ public class Room
         {
             map.SetTile(tile.Key, tile.Value);
         }
-
-        
-
     }
 
     public Vector3 getRoomCenter()  //Zwraca surowy srodek pokoju tj. (x, y)
@@ -88,8 +78,25 @@ public class Room
     {
         return mapCenter + getRoomCenter();
     }
-    public Vector3Int getMapCenterInt() //Zwraca srodek pokoju na mapie tj. (x + ofset, y + ofset)
+    public Vector3Int getMapCenterInt() //Zwraca srodek pokoju na mapie ale z koordynatami stricte do tilemapy
     {
+        /*
+         Dlaczego?
+            poniewa¿ samo skrócenie Vectora3 do Vectora3Int, a na takim wlasnie dzialaja tilemapy, wiaze ze soba wiele utrudnien
+            glownie chodzi o to ze wartosci dodadnie i ujemne zostaja skrocone
+            przyklad:
+                Vector3 = (-1.5, 2.5, 0);   - przed
+                Vector3Int = (-1, 2, 0);    - po
+            
+            problem polega na tym ze kafelki na ujemnych koordynatach zostaja przesuniete w prawo, poniewaz wartosc sie zwieksza (jest blizej 0), a te na dodatnich w lewo
+            Chcemy aby obie strony przesuwaly sie w JEDNA strone tak aby zapobiec bledom w przyszlosci
+            
+            przykla tej funkcji
+                Vector3 = (-1.5, 2.5, 0);   - przed
+                Vector3Int = (-2, 2, 0);    - po
+         */
+
+
         Vector3Int center = new Vector3Int(0,0,0); 
         Vector3 toInt = mapCenter + getRoomCenter();
         if(toInt.x < 0)
@@ -120,10 +127,6 @@ public class Room
     public bool getCon()
     {
         return conected;
-    }
-    public void setDebug(bool con)
-    {
-        this.debug = con;
     }
 
     public bool roomByCords(Vector2 cords)
