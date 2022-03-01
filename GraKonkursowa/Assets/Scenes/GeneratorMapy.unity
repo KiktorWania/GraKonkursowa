@@ -285,7 +285,8 @@ MonoBehaviour:
   - {fileID: 6720411108875120088, guid: ac90ed93eb2654f4b8e602daea02c773, type: 3}
   - {fileID: 2641382327371923372, guid: f4b12c5d2cb14984a9614d19d9d362b3, type: 3}
   - {fileID: 1607129510738371249, guid: 6354321be740c87449523f3a566170a0, type: 3}
-  roomCount: 10
+  roomSpaceing: 10
+  roomCount: 100
   floorTile: {fileID: 11400000, guid: 9266d8a508e5fe5458be0a91f5de500c, type: 2}
   wallTile: {fileID: 11400000, guid: fa61f23315230f4488d5115dd730c47a, type: 2}
 --- !u!4 &1680672333

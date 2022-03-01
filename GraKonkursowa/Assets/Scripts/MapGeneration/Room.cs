@@ -9,7 +9,7 @@ public class Room
     GameObject roomPrefab;
     public Tilemap map, roomMap;
 
-    private int range = 4;
+    private int spaccing = 4;
     
     public bool conected;
     public bool connectedByCorridor = false;
@@ -17,15 +17,19 @@ public class Room
 
     public bool debug;
 
+    public int id = 0;
+
     Tilemap roomTilemap;
     Dictionary<Vector3Int, TileBase> tiles = new Dictionary<Vector3Int, TileBase>();
-    public Room(GameObject roomPrefab, Tilemap map)
+    public Room(GameObject roomPrefab, Tilemap map, int spaccing)
     {
         this.map = map;
         this.roomPrefab = roomPrefab;
         this.roomMap = roomPrefab.GetComponentInChildren<Tilemap>();
 
         this.roomTilemap = roomPrefab.GetComponentInChildren<Tilemap>();
+
+        this.spaccing = spaccing;
 
         generate(new Vector3Int(0,0,0));
     }
@@ -45,7 +49,7 @@ public class Room
             var tile = roomTilemap.GetTile(cellIndex);
             var tilepos = ofset + cellIndex;
             if (map.HasTile(tilepos)){
-                Vector3Int newOfset = ofset + new Vector3Int(Random.Range(-range+1, range), Random.Range(-range+1, range), 0);
+                Vector3Int newOfset = ofset + new Vector3Int(Random.Range(-spaccing + 1, spaccing), Random.Range(-spaccing + 1, spaccing), 0);
                 mapCenter = newOfset;
                 tiles.Clear();
 
@@ -84,6 +88,29 @@ public class Room
     {
         return mapCenter + getRoomCenter();
     }
+    public Vector3Int getMapCenterInt() //Zwraca srodek pokoju na mapie tj. (x + ofset, y + ofset)
+    {
+        Vector3Int center = new Vector3Int(0,0,0); 
+        Vector3 toInt = mapCenter + getRoomCenter();
+        if(toInt.x < 0)
+        {
+            center.x = (int)toInt.x - 1;
+        }
+        else
+        {
+            center.x = (int)toInt.x;
+        }
+        if (toInt.y < 0)
+        {
+            center.y = (int)toInt.y - 1;
+        }
+        else
+        {
+            center.y = (int)toInt.y;
+        }
+
+        return center;
+    }
 
     //Gettery i settery - aka. nic ciekawego
     public void setConected(bool con)
@@ -97,6 +124,25 @@ public class Room
     public void setDebug(bool con)
     {
         this.debug = con;
+    }
+
+    public bool roomByCords(Vector2 cords)
+    {
+        if(cords.x == getMapCenter().x && cords.y == getMapCenter().y)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+
+    public int getId()
+    {
+        return id;
     }
 
 }
