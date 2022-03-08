@@ -7,6 +7,11 @@ public class Room
 {
     Vector3 mapCenter;
     GameObject roomPrefab;
+    
+
+    public Vector2 roomXBounds;
+    public Vector2 roomYBounds;
+
     public Tilemap map, roomMap;
 
     private int spaccing = 4;
@@ -31,6 +36,7 @@ public class Room
         this.id = id;
 
         generate(new Vector3Int(0,0,0));
+        getRoomSize();
     }
 
     public void generate(Vector3Int ofset)
@@ -43,6 +49,8 @@ public class Room
             jesli nie, to spisuje na glowna Tilemape pokoj
          */
 
+        
+
         foreach (var cellIndex in roomTilemap.cellBounds.allPositionsWithin)
         {
             var tile = roomTilemap.GetTile(cellIndex);
@@ -51,7 +59,6 @@ public class Room
                 Vector3Int newOfset = ofset + new Vector3Int(Random.Range(-spaccing + 1, spaccing), Random.Range(-spaccing + 1, spaccing), 0);
                 mapCenter = newOfset;
                 tiles.Clear();
-
                 generate(newOfset);
                 break;
             }
@@ -67,6 +74,7 @@ public class Room
         }
     }
 
+    //Gettery i settery
     public Vector3 getRoomCenter()  //Zwraca surowy srodek pokoju tj. (x, y)
     {
         var map = roomPrefab.GetComponentInChildren<Tilemap>();
@@ -99,24 +107,76 @@ public class Room
 
         Vector3Int center = new Vector3Int(0,0,0); 
         Vector3 toInt = mapCenter + getRoomCenter();
-        if(toInt.x < 0)
+        if (toInt.x - (int)toInt.x != 0)
         {
-            center.x = (int)toInt.x - 1;
+            if (toInt.x < 0)
+            {
+                center.x = (int)toInt.x - 1;
+            }
+            else
+            {
+                center.x = (int)toInt.x;
+            }
         }
         else
         {
             center.x = (int)toInt.x;
         }
-        if (toInt.y < 0)
+        if (toInt.y - (int)toInt.y != 0)
         {
-            center.y = (int)toInt.y - 1;
+            if (toInt.y < 0)
+            {
+                center.y = (int)toInt.y - 1;
+            }
+            else
+            {
+                center.y = (int)toInt.y;
+            }
         }
         else
         {
             center.y = (int)toInt.y;
         }
-
         return center;
+    }
+    public GameObject getRoomPrefab()
+    {
+        return roomPrefab;
+    }
+    public Vector3 getOfset()
+    {
+        return mapCenter;
+    }
+    public void getRoomSize()
+    {
+        int minX = 0, minY = 0, maxX = 0, maxY = 0;
+
+        foreach (var cellIndex in roomTilemap.cellBounds.allPositionsWithin)
+        {
+            var tilepos = cellIndex;
+            if (roomMap.HasTile(tilepos))
+            {
+                if (tilepos.x < minX)
+                {
+                    minX = tilepos.x;
+                }
+                else if (tilepos.x > maxX)
+                {
+                    maxX = tilepos.x;
+                }
+
+                if (tilepos.y < minY)
+                {
+                    minY = tilepos.y;
+                }
+                else if (tilepos.y > maxY)
+                {
+                    maxY = tilepos.y;
+                }
+            }
+        }
+        roomXBounds = new Vector2(minX + mapCenter.x, maxX + mapCenter.x);
+        roomYBounds = new Vector2(minY + mapCenter.y, maxY + mapCenter.y);
     }
 
     //Gettery i settery - aka. nic ciekawego

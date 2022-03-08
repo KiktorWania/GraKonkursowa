@@ -3,7 +3,11 @@ guid: deb828f1decc6694399b410f6facabfa
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - map: {instanceID: 0}
+  - mainRoomPrefab: {fileID: 7324539138128445253, guid: f730da06cbeec2244aa55c67ab7f2cd4, type: 3}
+  - floorTile: {instanceID: 0}
+  - wallTile: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
