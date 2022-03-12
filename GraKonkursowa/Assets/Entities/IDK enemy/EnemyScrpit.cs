@@ -58,12 +58,16 @@ public class EnemyScrpit : MonoBehaviour
         StartCoroutine(randWalk());
     }
 
-    void TakeDamage(int dmg)
+    public void TakeDamage(int dmg)
     {
         health -= dmg;
         if (health <= 0)
         {
             Destroy(gameObject);
         }
+    }
+    public void ActiveShield(GameObject shield)
+    {
+        shield.transform.position = transform.position + new Vector3(0, -2.17f, 0);
     }
 }

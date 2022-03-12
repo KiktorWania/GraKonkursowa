@@ -29,6 +29,11 @@ public class PlayerMovement : MonoBehaviour
     public Animator cloudAnimation;
     GameObject[] debugs;
     // Start is called before the first frame update
+
+    public GameObject qAbbility;
+    public GameObject eAbbility;
+    public GameObject iAbbility;
+    public GameObject oAbbility;
     void Awake()
     {
         debugs = GameObject.FindGameObjectsWithTag("DEBUG");
@@ -43,6 +48,7 @@ public class PlayerMovement : MonoBehaviour
     {
         TurnDebug();
         Attacks();
+        Abbilites();
 
         //Movement
         float moveX = Input.GetAxisRaw("Horizontal");
@@ -154,7 +160,8 @@ public class PlayerMovement : MonoBehaviour
 
             foreach (Collider2D enemy in hitEnemies)
             {
-                enemy.GetComponent<PunchBagScript>().TakeDamage(27);
+                //enemy.GetComponent<PunchBagScript>().TakeDamage(27);
+                enemy.GetComponent<EnemyScrpit>().TakeDamage(27);
             }
         }
         //Weak attack
@@ -190,7 +197,8 @@ public class PlayerMovement : MonoBehaviour
 
             foreach (Collider2D enemy in hitEnemies)
             {
-                enemy.GetComponent<PunchBagScript>().TakeDamage(15);
+                //enemy.GetComponent<PunchBagScript>().TakeDamage(15);
+                enemy.GetComponent<EnemyScrpit>().TakeDamage(15);
             }
         }
         //Block
@@ -230,5 +238,25 @@ public class PlayerMovement : MonoBehaviour
         attack = false;
         yield return new WaitForSecondsRealtime(recharge);
         attack = true;
+    }
+
+    void Abbilites()
+    {
+        if (Input.GetKeyDown(KeyCode.Q) && qAbbility.transform.parent.childCount > 3)
+        {
+            qAbbility.GetComponent<Abbilitie>().ActiveAbblility();
+        }
+        if (Input.GetKeyDown(KeyCode.E) && eAbbility.transform.parent.childCount > 3)
+        {
+            eAbbility.GetComponent<Abbilitie>().ActiveAbblility();
+        }
+        if (Input.GetKeyDown(KeyCode.I) && iAbbility.transform.parent.childCount > 3)
+        {
+            iAbbility.GetComponent<Abbilitie>().ActiveAbblility();
+        }
+        if (Input.GetKeyDown(KeyCode.O) && oAbbility.transform.parent.childCount > 3)
+        {
+            oAbbility.GetComponent<Abbilitie>().ActiveAbblility();
+        }
     }
 }
