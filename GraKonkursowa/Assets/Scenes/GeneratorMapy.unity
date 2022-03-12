@@ -216,6 +216,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1031001532}
   - component: {fileID: 1031001531}
+  - component: {fileID: 1031001534}
+  - component: {fileID: 1031001533}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -250,6 +252,51 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!66 &1031001533
+CompositeCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1031001530}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_GeometryType: 0
+  m_GenerationType: 0
+  m_EdgeRadius: 0
+  m_ColliderPaths:
+  - m_Collider: {fileID: 1705901828}
+    m_ColliderPaths: []
+  m_CompositePaths:
+    m_Paths: []
+  m_VertexDistance: 0.0005
+  m_OffsetDistance: 0.00005
+--- !u!50 &1031001534
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1031001530}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &1680672331
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,10 +332,11 @@ MonoBehaviour:
   - {fileID: 6720411108875120088, guid: ac90ed93eb2654f4b8e602daea02c773, type: 3}
   - {fileID: 2641382327371923372, guid: f4b12c5d2cb14984a9614d19d9d362b3, type: 3}
   - {fileID: 1607129510738371249, guid: 6354321be740c87449523f3a566170a0, type: 3}
-  roomSpaceing: 10
-  roomCount: 100
-  floorTile: {fileID: 11400000, guid: 9266d8a508e5fe5458be0a91f5de500c, type: 2}
+  roomSpaceing: 5
+  roomCount: 10
+  floorTile: {fileID: 11400000, guid: 2dc678f9a1132f642959c8603cbeb297, type: 2}
   wallTile: {fileID: 11400000, guid: fa61f23315230f4488d5115dd730c47a, type: 2}
+  doorTile: {fileID: 11400000, guid: c7ad24c7d3094ac468f4e4e96e39c68b, type: 2}
 --- !u!4 &1680672333
 Transform:
   m_ObjectHideFlags: 0
@@ -314,6 +362,7 @@ GameObject:
   - component: {fileID: 1705901825}
   - component: {fileID: 1705901827}
   - component: {fileID: 1705901826}
+  - component: {fileID: 1705901828}
   m_Layer: 0
   m_Name: Floor
   m_TagString: Untagged
@@ -519,3 +568,19 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!19719996 &1705901828
+TilemapCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1705901824}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 1
+  m_Offset: {x: 0, y: 0}
+  m_MaximumTileChangeCount: 1000
+  m_ExtrusionFactor: 0.00001

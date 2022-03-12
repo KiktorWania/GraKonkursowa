@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿
+//code written by Wiktor Kania
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
 using UnityEditor;
@@ -10,6 +13,8 @@ using Random = UnityEngine.Random;
 
 public class Generator : MonoBehaviour
 {
+    bool debug = false;
+
     [SerializeField]
     public Tilemap map;
     [SerializeField]
@@ -25,13 +30,15 @@ public class Generator : MonoBehaviour
     private Room[] rooms;
 
     [SerializeField]
-    private TileBase floorTile, wallTile;
+    private TileBase floorTile, wallTile, doorTile;
+
     /// /////////////////////
 
     Delaunator delaunator;  //Algorytm triangulacji
     IPoint[] points;        
     List<Edge> edges = new List<Edge>();
 
+    List<Vector3Int> doorTiles = new List<Vector3Int>();
 
     /// /////////////////////
 
@@ -46,6 +53,7 @@ public class Generator : MonoBehaviour
 
         mainRoom = new Room(mainRoomPrefab, map, 10, 0);                                //Stworzenie głównego pokoju
         mainRoom.setId(0);
+
         roomCenters[0] = new Vector2(mainRoom.getMapCenter().x, mainRoom.getMapCenter().y);
         rooms[0] = mainRoom;                                                         //Dodanie go do słownika z indeksem zerowym
 
@@ -59,6 +67,25 @@ public class Generator : MonoBehaviour
 
         roomConnector();        //połączenie pokoi
         fillOutMap(wallTile);   //wypełnienie reszty mapy
+        drawDoors();            //wygenerowanie odpowiednich drzwi
+        generatePrefabs();      //wygenerowanie prefabow z pokoi
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Slash))
+        {
+            debug = !debug;
+        }
+    }
+    void generatePrefabs()
+    {
+        foreach (var room in rooms)
+        {
+            var prefab = room.getRoomPrefab();
+            var newRoom = Instantiate(room.getRoomPrefab(), room.getOfset(), Quaternion.identity);
+            newRoom.GetComponentInChildren<TilemapRenderer>().enabled = false;
+        }
     }
     void roomConnector()
     {
@@ -70,8 +97,10 @@ public class Generator : MonoBehaviour
 
         foreach(var edge in connectedRoomids)
         {
-            drawCorridor(rooms[edge.from].getMapCenterInt(), rooms[edge.to].getMapCenterInt());
-        } 
+            drawCorridor(rooms[edge.from], rooms[edge.to]);
+
+        }
+        
     }
     public void fillOutMap(TileBase fillTile)
     {
@@ -85,109 +114,181 @@ public class Generator : MonoBehaviour
         }
     }
 
-    public void drawCorridor(Vector3Int startPos, Vector3Int endPos)
+    public void drawCorridor(Room fromRoom, Room toRoom)
     {
+        List<Vector3Int> tilePos = new List<Vector3Int>();
+
         //w duzym skrócie, jezeli pokoje so wystarczajaca blisko siebie to rysuje to prosta linie miedzy nimi,
         //jesli nie to rysuje korytarz w ksztalcie litery L
+        Vector3Int v1 = fromRoom.getMapCenterInt();
+        Vector3Int v2 = toRoom.getMapCenterInt();
+        Vector3Int midPoint = Vector3ToInt(new Vector3((v1.x + v2.x) / 2, (v1.y + v2.y) / 2, 0));
 
-        int zasieg = 5; //zakres ktory pokoje musza przekroczyc aby narysowac korzytarz w ksztalcie L
-
-        Vector3 ab = (startPos + endPos) / 2;
-        Vector3Int middle = Vector3ToInt(ab);
-
-        float distanceX = Mathf.Abs(startPos.x - endPos.x); //dystans miedzy pokojami w osi X
-        float distanceY = Mathf.Abs(startPos.y - endPos.y); //dystans miedzy pokojami w osi Y
-
-        if (distanceX > zasieg || distanceY > zasieg)
+        bool inXRange = false, inYRange = false;
+        if(midPoint.x > fromRoom.roomXBounds.x && midPoint.x < fromRoom.roomXBounds.y && midPoint.x > toRoom.roomXBounds.x && midPoint.x < toRoom.roomXBounds.y)
         {
-            Vector3Int curPos = startPos;
-
-            //Korytarz zawsze jest generowany od punktu a do punktu b
-            //Pierwsze generowany jest korytarz w osi X potem Y
-
-            int direction = 0; // 1 = RIGHT/UP, -1 = LEFT/DOWN
-            Debug.Log(startPos);
-            Debug.Log(endPos);
-            Debug.Log(curPos);
-            Debug.Log("--------------");
-
-            while (curPos.x != endPos.x)
-            {
-                if (curPos.x - endPos.x < 0)
-                {
-                    direction = -1;
-                }
-                else
-                {
-                    direction = 1;
-                }
-                curPos.x -= direction;
-
-                Debug.Log(curPos + " x");
-                map.SetTile(curPos, floorTile);
-            }
-            while (curPos.y != endPos.y)
-            {
-                if (curPos.y - endPos.y < 0)
-                {
-                    direction = -1;
-                }
-                else
-                {
-                    direction = 1;
-                }
-                curPos.y -= direction;
-
-                Debug.Log(curPos + " y");
-                map.SetTile(curPos, floorTile);
-            }
-        }else if(distanceX < zasieg)
+            inXRange = true;
+        }
+        if (midPoint.y > fromRoom.roomYBounds.x && midPoint.y < fromRoom.roomYBounds.y && midPoint.y > toRoom.roomYBounds.x && midPoint.y < toRoom.roomYBounds.y)
         {
-            Vector3Int curPos = new Vector3Int(middle.x, startPos.y, 0);
-            int direction = 0;
-            while (curPos.y != endPos.y)
-            {
-                if (curPos.y - endPos.y < 0)
-                {
-                    direction = -1;
-                }
-                else
-                {
-                    direction = 1;
-                }
-                curPos.y -= direction;
+            inYRange = true;
+        }
 
-                map.SetTile(curPos, floorTile);
+        Dictionary<Vector3Int, TileBase> tiles = new Dictionary<Vector3Int, TileBase>();
+
+        if (inXRange)
+        {
+
+            //Rysuje pionowy korytarz
+            Vector3Int curPos = new Vector3Int(midPoint.x, v1.y, 0);
+
+            while(curPos.y != v2.y)
+            {
+                if(curPos.y < v2.y)
+                {
+                    if (map.GetTile(curPos) == wallTile)
+                    {
+                        doorTiles.Add(curPos);
+                    }
+                    map.SetTile(curPos, floorTile);
+                    tilePos.Add(curPos);
+                    curPos += Vector3Int.up;
+                }
+                else if(curPos.y > v2.y)
+                {
+                    if (map.GetTile(curPos) == wallTile)
+                    {
+                        doorTiles.Add(curPos);
+                    }
+                    map.SetTile(curPos, floorTile);
+                    tilePos.Add(curPos);
+                    curPos += Vector3Int.down;
+                }
             }
         }
-        else if (distanceY < zasieg)
+        if (inYRange)
         {
-            Vector3Int curPos = new Vector3Int(startPos.x, middle.y, 0);
-            int direction = 0;
-            while (curPos.x != endPos.x)
+            //Rysuje poziomy korytarz
+            Vector3Int curPos = new Vector3Int(v1.x, midPoint.y, 0);
+            while (curPos.x != v2.x)
             {
-                if (curPos.x - endPos.x < 0)
+                if (curPos.x < v2.x)
                 {
-                    direction = -1;
+                    if (map.GetTile(curPos) == wallTile)
+                    {
+                        doorTiles.Add(curPos);
+                    }
+                    map.SetTile(curPos, floorTile);
+                    tilePos.Add(curPos);
+                    curPos += Vector3Int.right;
                 }
-                else
+                else if (curPos.x > v2.x)
                 {
-                    direction = 1;
+                    if (map.GetTile(curPos) == wallTile)
+                    {
+                        doorTiles.Add(curPos);
+                    }
+                    map.SetTile(curPos, floorTile);
+                    tilePos.Add(curPos);
+                    curPos += Vector3Int.left;
                 }
-                curPos.x -= direction;
-
-                map.SetTile(curPos, floorTile);
             }
         }
 
+        if(!inYRange && !inXRange)
+        {
+            Vector3Int curPos = v1;
+            while(curPos.x != v2.x)
+            {
+                if(curPos.x < v2.x)
+                {
+                    if (map.GetTile(curPos) == wallTile)
+                    {
+                        doorTiles.Add(curPos);
+                    }
+                    map.SetTile(curPos, floorTile);
+                    tilePos.Add(curPos);
+                    curPos += Vector3Int.right;
+                }else
+                {
+                    if (map.GetTile(curPos) == wallTile)
+                    {
+                        doorTiles.Add(curPos);
+                    }
+                    map.SetTile(curPos, floorTile);
+                    tilePos.Add(curPos);
+                    curPos += Vector3Int.left;
+                }
+            }
+
+            while(curPos.y != v2.y)
+            {
+                if(curPos.y < v2.y)
+                {
+                    if (map.GetTile(curPos) == wallTile)
+                    {
+                        doorTiles.Add(curPos);
+                    }
+                    map.SetTile(curPos, floorTile);
+                    tilePos.Add(curPos);
+                    curPos += Vector3Int.up;
+                }
+                else
+                {
+                    if (map.GetTile(curPos) == wallTile)
+                    {
+                        doorTiles.Add(curPos);
+                    }
+                    map.SetTile(curPos, floorTile);
+                    tilePos.Add(curPos);
+                    curPos += Vector3Int.down;
+                }
+            }
+        }
+
+        foreach(var pos in tilePos)
+        {
+            map.SetTransformMatrix(pos, Matrix4x4.Rotate(Quaternion.Euler(0, 0, 0)));
+        }
+    }
+
+    public void drawDoors()
+    {
+        List<Vector3Int> newPos = new List<Vector3Int>();
+        foreach (var pos in doorTiles)
+        {
+            if (checkForDoorTiles(pos))
+            {
+                newPos.Add(pos);
+                map.SetTile(pos, doorTile);
+               
+            }
+        }
+        
+        doorTiles.Clear();
+        doorTiles = newPos;
+    }
+
+    public bool checkForDoorTiles(Vector3Int doorPos)
+    {
+        if(map.GetTile(doorPos + Vector3Int.up) == wallTile && map.GetTile(doorPos + Vector3Int.down) == wallTile)
+        {
+            return true;
+        }
+        else if(map.GetTile(doorPos + Vector3Int.right) == wallTile && map.GetTile(doorPos + Vector3Int.left) == wallTile)
+        {
+            map.SetTransformMatrix(doorPos, Matrix4x4.Rotate(Quaternion.Euler(0, 0, 90)));
+            return true;
+        }
+
+        return false;
     }
 
     private void OnDrawGizmos()
     {
-        bool DebugMode = true;
         //Gizmos do wyswietlania polaczen miedzy pokojami
 
-        if (Application.isPlaying && DebugMode)
+        if (Application.isPlaying && debug)
         {
             foreach (var room in rooms)
             {
@@ -231,7 +332,6 @@ public class Generator : MonoBehaviour
                     toId = room.getId();
                 }
             }
-            Debug.Log(fromId);
             edges.Add(new Edge() { from = fromId, to = toId, length = Vector2.Distance(edge.P.ToVector2(), edge.Q.ToVector2()) });
         }); 
         KruskalAlghoritm(sortEdges(edges.ToArray()));   //sortuje zbiór krawędzi i wywołuje algoryutm Kruskala
@@ -280,8 +380,6 @@ public class Generator : MonoBehaviour
     }
     void KruskalAlghoritm(Edge[] edge)  //Algorytm Kruskala MST. Dużo by pisać, jak cie interesuje to sobie w necie poszukaj
     {
-        Debug.Log(rooms.Length);
-        Debug.Log(edge.Length);
         int V = rooms.Length;
         Edge[] result = new Edge[V];
         int e = 0;
@@ -321,23 +419,38 @@ public class Generator : MonoBehaviour
     public Vector3Int Vector3ToInt(Vector3 toInt)
     {
         Vector3Int center = new Vector3Int(0, 0, 0);
-        if (toInt.x < 0)
+        if(toInt.x - (int) toInt.x != 0)
         {
-            center.x = (int)toInt.x - 1;
+            if (toInt.x < 0)
+            {
+                center.x = (int)toInt.x - 1;
+            }
+            else
+            {
+                center.x = (int)toInt.x;
+            }
         }
         else
         {
             center.x = (int)toInt.x;
         }
-        if (toInt.y < 0)
+        if (toInt.y - (int) toInt.y != 0)
         {
-            center.y = (int)toInt.y - 1;
+            if(toInt.y < 0)
+        {
+                center.y = (int)toInt.y - 1;
+            }
+            else
+            {
+                center.y = (int)toInt.y;
+            }
         }
         else
         {
             center.y = (int)toInt.y;
         }
-
         return center;
     }
+
+    
 }
