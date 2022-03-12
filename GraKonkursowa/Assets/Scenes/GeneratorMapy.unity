@@ -334,9 +334,9 @@ MonoBehaviour:
   - {fileID: 1607129510738371249, guid: 6354321be740c87449523f3a566170a0, type: 3}
   roomSpaceing: 5
   roomCount: 10
-  floorTile: {fileID: 11400000, guid: 0963ea53112941f468228bb6b33e527b, type: 2}
+  floorTile: {fileID: 11400000, guid: 2dc678f9a1132f642959c8603cbeb297, type: 2}
   wallTile: {fileID: 11400000, guid: fa61f23315230f4488d5115dd730c47a, type: 2}
-  doorTile: {fileID: 11400000, guid: abd059b14ffba5945924a0e50f2062b5, type: 2}
+  doorTile: {fileID: 11400000, guid: c7ad24c7d3094ac468f4e4e96e39c68b, type: 2}
 --- !u!4 &1680672333
 Transform:
   m_ObjectHideFlags: 0
