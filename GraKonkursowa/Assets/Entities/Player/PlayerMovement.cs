@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
     public bool attack;
     public char[] combo;
     public float comboTime = 0;
+    public static int direction;
     bool protect;
 
     public Camera cam;
@@ -73,12 +74,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (clouds != null)
         {
-            cam.orthographicSize = 3f;
+            cam.orthographicSize = 2f;
             cloudAnimation.SetBool("InsideCloud", true);
         }
         else
         {
-            cam.orthographicSize = 5f;
+            cam.orthographicSize = 3f;
             cloudAnimation.SetBool("InsideCloud", false);
         }
     }
