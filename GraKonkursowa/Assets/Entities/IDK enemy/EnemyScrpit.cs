@@ -15,6 +15,8 @@ public class EnemyScrpit : MonoBehaviour
     public Vector3 randNewPlace;
 
     public int state = 0;
+
+    public bool spawned = false;
     void Start()
     {
         randomPlace = new Vector3(Random.Range(-2, 2), Random.Range(-2, 2), 0);
