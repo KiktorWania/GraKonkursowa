@@ -2660,32 +2660,8 @@ PrefabInstance:
       propertyPath: cloudAnimation
       value: 
       objectReference: {fileID: 1667806527}
-    - target: {fileID: 5649114732286128609, guid: 6e0c909229ed2ee45a78054a3abfc1fd, type: 3}
-      propertyPath: m_Size.x
-      value: 0.5247985
-      objectReference: {fileID: 0}
-    - target: {fileID: 5649114732286128609, guid: 6e0c909229ed2ee45a78054a3abfc1fd, type: 3}
-      propertyPath: m_Size.y
-      value: 1.6853819
-      objectReference: {fileID: 0}
-    - target: {fileID: 5649114732286128609, guid: 6e0c909229ed2ee45a78054a3abfc1fd, type: 3}
-      propertyPath: m_Offset.x
-      value: -0.25979608
-      objectReference: {fileID: 0}
-    - target: {fileID: 5649114732286128609, guid: 6e0c909229ed2ee45a78054a3abfc1fd, type: 3}
-      propertyPath: m_Offset.y
-      value: -0.18386316
-      objectReference: {fileID: 0}
     - target: {fileID: 5649114732286128612, guid: 6e0c909229ed2ee45a78054a3abfc1fd, type: 3}
       propertyPath: m_Name
-      value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 5649114732286128612, guid: 6e0c909229ed2ee45a78054a3abfc1fd, type: 3}
-      propertyPath: m_Layer
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 5649114732286128612, guid: 6e0c909229ed2ee45a78054a3abfc1fd, type: 3}
-      propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 5649114732286128622, guid: 6e0c909229ed2ee45a78054a3abfc1fd, type: 3}

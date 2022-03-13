@@ -55,7 +55,7 @@ public class EnemyScrpit : MonoBehaviour
     IEnumerator randWalk()
     {
         yield return new WaitForSeconds(3);
-        randomPlace = new Vector3(Random.Range(-2,3), Random.Range(-2,3), 0);
+        randomPlace = new Vector3(Random.Range(-2, 3), Random.Range(-2, 3), 0);
         randNewPlace = transform.position + randomPlace;
         StartCoroutine(randWalk());
     }
@@ -63,6 +63,7 @@ public class EnemyScrpit : MonoBehaviour
     public void TakeDamage(int dmg)
     {
         health -= dmg;
+        debugInfo.text = "Hp: " + health + "\nState: " + state;
         if (health <= 0)
         {
             Destroy(gameObject);
