@@ -83,6 +83,7 @@ public class Abbilitie : MonoBehaviour
                     }
                     if (lookingEnemy == null) return;
                     Physics2D.Linecast(transform.position, lookingEnemy.transform.position, lM);
+                    //lookingEnemy.GetComponent<EnemyScrpit>().ActiveShield(shiled);
                     break;
             }
         }
