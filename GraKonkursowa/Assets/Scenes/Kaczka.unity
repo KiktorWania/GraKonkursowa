@@ -2512,6 +2512,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 53813862}
     - target: {fileID: 2317245767944180481, guid: 5eac78f274114084c8236d327501e516, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2317245767944180481, guid: 5eac78f274114084c8236d327501e516, type: 3}
       propertyPath: lastSeenPoint
       value: 
       objectReference: {fileID: 773506926}
@@ -2640,6 +2644,22 @@ PrefabInstance:
       propertyPath: cloudAnimation
       value: 
       objectReference: {fileID: 1667806527}
+    - target: {fileID: 5649114732286128609, guid: 6e0c909229ed2ee45a78054a3abfc1fd, type: 3}
+      propertyPath: m_Size.x
+      value: 0.5247985
+      objectReference: {fileID: 0}
+    - target: {fileID: 5649114732286128609, guid: 6e0c909229ed2ee45a78054a3abfc1fd, type: 3}
+      propertyPath: m_Size.y
+      value: 1.6853819
+      objectReference: {fileID: 0}
+    - target: {fileID: 5649114732286128609, guid: 6e0c909229ed2ee45a78054a3abfc1fd, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.25979608
+      objectReference: {fileID: 0}
+    - target: {fileID: 5649114732286128609, guid: 6e0c909229ed2ee45a78054a3abfc1fd, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.18386316
+      objectReference: {fileID: 0}
     - target: {fileID: 5649114732286128612, guid: 6e0c909229ed2ee45a78054a3abfc1fd, type: 3}
       propertyPath: m_Name
       value: Player
@@ -2890,6 +2910,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hud
       objectReference: {fileID: 0}
+    - target: {fileID: 7308229023936720134, guid: 20a85a9528b52f44aa8dffa7d8e13a9e, type: 3}
+      propertyPath: lM.m_Bits
+      value: 1591
+      objectReference: {fileID: 0}
+    - target: {fileID: 7308229023936720134, guid: 20a85a9528b52f44aa8dffa7d8e13a9e, type: 3}
+      propertyPath: timeAblility
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7308229024273400416, guid: 20a85a9528b52f44aa8dffa7d8e13a9e, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -2909,6 +2937,10 @@ PrefabInstance:
     - target: {fileID: 7308229025112740407, guid: 20a85a9528b52f44aa8dffa7d8e13a9e, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7308229025583006943, guid: 20a85a9528b52f44aa8dffa7d8e13a9e, type: 3}
+      propertyPath: lM.m_Bits
+      value: 320
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 20a85a9528b52f44aa8dffa7d8e13a9e, type: 3}
