@@ -2495,6 +2495,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 505201891628706746, guid: 5eac78f274114084c8236d327501e516, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3.5444
+      objectReference: {fileID: 0}
+    - target: {fileID: 505201891628706746, guid: 5eac78f274114084c8236d327501e516, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.5444
+      objectReference: {fileID: 0}
+    - target: {fileID: 505201891628706746, guid: 5eac78f274114084c8236d327501e516, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3.5444
+      objectReference: {fileID: 0}
+    - target: {fileID: 505201891628706746, guid: 5eac78f274114084c8236d327501e516, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.018
+      objectReference: {fileID: 0}
     - target: {fileID: 2317245767944180481, guid: 5eac78f274114084c8236d327501e516, type: 3}
       propertyPath: speed
       value: 3
@@ -2941,6 +2957,10 @@ PrefabInstance:
     - target: {fileID: 7308229025583006943, guid: 20a85a9528b52f44aa8dffa7d8e13a9e, type: 3}
       propertyPath: lM.m_Bits
       value: 320
+      objectReference: {fileID: 0}
+    - target: {fileID: 7308229025583006943, guid: 20a85a9528b52f44aa8dffa7d8e13a9e, type: 3}
+      propertyPath: timeAblility
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 20a85a9528b52f44aa8dffa7d8e13a9e, type: 3}
