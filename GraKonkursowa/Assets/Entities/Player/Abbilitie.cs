@@ -56,10 +56,13 @@ public class Abbilitie : MonoBehaviour
                         }
                         else
                         {
+                            float moreCorection = 1;
+                            if (Input.GetAxisRaw("Horizontal") != 0 && Input.GetAxisRaw("Vertical") != 0)
+                                moreCorection = 0.5f;
                             if ((hit.distance - 1) < 0)
                                 this.gameObject.transform.GetChild(3).GetComponent<Image>().fillAmount = 1;
                             else
-                                player.transform.position += new Vector3(1 * Input.GetAxisRaw("Horizontal") * (hit.distance - 1), 1 * Input.GetAxisRaw("Vertical") * (hit.distance - 1), 0);
+                                player.transform.position += new Vector3(1 * Input.GetAxisRaw("Horizontal") * (hit.distance - 1 - moreCorection), 1 * Input.GetAxisRaw("Vertical") * (hit.distance - 1), 0);
                             Debug.Log("Short dash: " + hit.collider);
                         }                    
                     }
@@ -74,7 +77,7 @@ public class Abbilitie : MonoBehaviour
                     float dist = 0;
                     foreach (GameObject eTransform in enemy)
                     {
-                        float a = Vector3.Distance(eTransform.transform.position, transform.position);
+                        float a = Vector3.Distance(eTransform.transform.position, player.transform.position);
                         if (dist < a)
                         {
                             lookingEnemy = eTransform;
